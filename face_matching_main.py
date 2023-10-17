@@ -41,7 +41,7 @@ def is_same_person(image1_data, image2_data):
     for encoding1 in face_encodings1:
         for encoding2 in face_encodings2:
             distance = face_recognition.face_distance([encoding1], encoding2)[0]
-            threshold = 0.6
+            threshold = 0.45
             if distance < threshold:
                 return True
     return False
