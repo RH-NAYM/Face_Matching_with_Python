@@ -9,8 +9,6 @@ import pytz
 import asyncio
 import io
 
-
-
 app = FastAPI()
 
 class Item(BaseModel):
@@ -47,7 +45,7 @@ def is_same_person(image1_data, image2_data):
     return False
 
 def analyse(r):
-    if r == True:
+    if r:
         det = "Same Person"
     else:
         det = "Different Person"
@@ -57,15 +55,15 @@ async def process_item(item: Item):
     try:
         img1_data = download_image(item.img1)
         img2_data = download_image(item.img2)
-        
+
         if img1_data is not None and img2_data is not None:
             result = is_same_person(img1_data, img2_data)
             report = analyse(result)
             return {"AI": report}
         else:
             return {"AI": "Image download failed"}
-    finally:
-        pass
+    except Exception as e:
+        return {"AI": f"Error: {str(e)}"}
 
 async def process_items(items: Union[Item, List[Item]]):
     if isinstance(items, list):
@@ -89,12 +87,11 @@ async def create_items(items: Union[Item, List[Item]]):
         print(items)
         print("Last Execution Time: ", get_bd_time())
         return results
-    finally:
-        pass
-
+    except Exception as e:
+        return {"AI": f"Error: {str(e)}"}
 
 if __name__ == "__main__":
     try:
         uvicorn.run(app, host="127.0.0.1", port=8060)
-    finally:
-        pass
+    except Exception as e:
+        print(f"Server error: {str(e)}")
